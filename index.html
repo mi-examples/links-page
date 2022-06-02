@@ -1,0 +1,676 @@
+<link rel="stylesheet" href="/pt/links-page/style.css">
+<div class="w-wrapper" id="links-page-container">
+    <div class="w-container">
+        <div class="w-header">
+            <h2 class="w-header__title">[Page Title]</h2>
+            <img class="w-header__logo" src="[Logo]" style="max-height: [Logo Max Height]; width: auto;" alt="logo" />
+        </div>
+        <div id="analytics-row" class="w-favorites">
+        </div>
+    </div>
+</div>
+
+<div id="nav-container" class="pp-nav-page-container">
+    <div class="w-left-bar-btn" id="w-left-bar-btn">
+        <i class="fa fa-arrow-right w-left-bar-btn__icon p-main-color"></i>
+    </div>
+    <div class="w-left-bar" id="w-left-bar">
+        <div class="w-left-bar__content">
+            <div class="w-left-bar__close" id="w-left-bar-close"></div>
+
+            <div id="w-left-bar-menu-wrapper"></div>
+
+            <div class="w-left-bar-back p-main-color-imp">
+                <i class="fa fa-arrow-left w-left-bar-back__icon p-main-color"></i>
+                Back to Home
+            </div>
+        </div>
+    </div>
+
+    <div class="w-wrapper w-wrapper-iframe" id="w-iframe-wrapper">
+
+    </div>
+</div>
+
+<script>
+    const PPAnalytics = function (folders) {
+        this.folders = folders;
+        this.childrenFolders = {};
+        this.includeMostPopularFolder = false;
+    }
+    PPAnalytics.prototype.init = function () {
+        const self = this;
+
+        self.fetchFolders().then(
+
+
+            response => {
+                const folders = response.folders;
+
+                for (let el in self.folders) {
+                    self.findFolders(self.folders[el].folderId, folders);
+                }
+                self.buildElements(self.folders);
+                self.sortElements();
+
+                self.buildColumns(self.folders, '#analytics-row');
+                self.buildBar(self.folders, '#w-left-bar-menu-wrapper');
+
+                self.buildFavoritesMenu('/pt/links-page/img/star.svg', 'Favorites', '#w-left-bar-menu-wrapper');
+
+                self.sortFolders();
+
+                self.addStyles(self.folders);
+            }
+        )
+
+    }
+    PPAnalytics.prototype.sortFolders = function () {
+        const self = this;
+
+        function sortByTitle(a, b) {
+            if (a.title < b.title) {
+                return -1;
+            }
+            if (a.title > b.title) {
+                return 1;
+            }
+            return 0;
+        }
+
+        $('.sortable .children-folder-ul').each(function () {
+            let parentId = $(this).attr('data-list-partent-id');
+
+            let obj = {
+                id: $(this).attr('data-list-id'),
+                title: $(this).first('.w-favorites__column-list-title').text(),
+            }
+
+            if (!self.childrenFolders.hasOwnProperty(parentId)) {
+                self.childrenFolders[parentId] = [obj];
+            } else {
+                self.childrenFolders[parentId].push(obj);
+            }
+        });
+
+        for (let el in self.childrenFolders) {
+            self.childrenFolders[el].sort(sortByTitle);
+            let list = $(`[data-list-id="${el}"]`),
+                order = list.find('.children-folder-wrapper').first().prev().css('order');
+
+            if (!order) {
+                order = 0;
+            }
+
+            self.childrenFolders[el].forEach((item, index) => {
+                let list = $(`[data-list-id="${item.id}"]`),
+                    li = list.parent();
+
+                li.css('order', +order + index + 1);
+            })
+        }
+
+    }
+    PPAnalytics.prototype.sortElements = function () {
+        const self = this;
+
+        function sortByName(a, b) {
+            let cleanA = a.name.replace(/<\/?[^>]+(>|$)/g, ""),
+                cleanB = b.name.replace(/<\/?[^>]+(>|$)/g, "");
+
+            if (cleanA < cleanB) {
+                return -1;
+            }
+            if (cleanA > cleanB) {
+                return 1;
+            }
+            return 0;
+        }
+
+        for (let el in self.folders) {
+            self.folders[el].elements.sort(sortByName);
+        }
+    }
+
+    PPAnalytics.prototype.buildElements = function (folders) {
+        const self = this;
+
+        $.ajax({
+            url: "/home/index/refresh/ajax/Y",
+            type: "POST",
+            data: {},
+            async: false,
+            success: function (response) {
+                const db = new DashboardStorage(response.data),
+                    rows = db.rows;
+
+                const folderItems = response.folderItems;
+
+                for (let item in folders) {
+                    folderItems.forEach(e => {
+                        if (folders[item].folderId == e.folder_id) {
+                            folders[item].elementsId.push({
+                                'id': e.element_id,
+                                'order': e.display_order
+                            });
+                        }
+                    })
+                }
+
+                for (let item in folders) {
+                    self.getElements(folders[item].folderId, rows);
+                }
+            }
+        });
+    }
+
+    PPAnalytics.prototype.getElements = function (folderId, rows) {
+        const self = this;
+        let foldersElems = self.folders[folderId].elementsId;
+
+        for (let item in rows) {
+            for (let i = 0; i < foldersElems.length; i++) {
+                if (foldersElems[i]['id'] == rows[item]['element_id']) {
+                    if (rows[item]['section_type'] == 'Category') {
+                        if (rows[item]['element_type'] === 'external report') {
+                            self.folders[folderId].elements.push({
+                                id: rows[item]['element_id'],
+                                segment: rows[item]['segment_value_id'],
+                                name: rows[item]['element_dashboard_name'],
+                                type: 'external report',
+                                descr: rows[item]['element_info'],
+                                order: foldersElems[i]['order'],
+                            })
+                        }
+                        if (rows[item]['element_type'] === 'other external content') {
+                            self.folders[folderId].elements.push({
+                                id: rows[item]['element_id'],
+                                segment: rows[item]['segment_value_id'],
+                                name: rows[item]['element_dashboard_name'],
+                                type: 'other external content',
+                                descr: rows[item]['element_info'],
+                                order: foldersElems[i]['order'],
+                            })
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+    PPAnalytics.prototype.fetchFolders = function () {
+        return $.ajax({
+            url: '/home/index/load-folders/ajax/Y',
+            dataType: 'json',
+        }).then(response => {
+            return response;
+        });
+    }
+    PPAnalytics.prototype.findFolder = function (parentFolderId, folder) {
+        const self = this;
+
+        for (let el in folder) {
+            if (parentFolderId == folder[el].folderId) {
+                return folder;
+            }
+        }
+    }
+    PPAnalytics.prototype.findFolders = function (folderId, folders) {
+        const self = this;
+
+        for (let i = 0; i < folders.length; i++) {
+            if (folders[i]['parent_folder_id'] == folderId) {
+                let folder = self.findFolder(folderId, self.folders);
+
+                folder[folders[i]['folder_id']] = {
+                    title: folders[i]['name'],
+                    folderId: folders[i]['folder_id'],
+                    parentFolderId: folders[i]['parent_folder_id'],
+                    elements: [],
+                    elementsId: [],
+                }
+                self.findFolders(folders[i]['folder_id'], folders);
+            }
+        }
+    }
+
+    PPAnalytics.prototype.buildBar = function (data, container) {
+        const self = this;
+
+        for (let item in data) {
+            let list = $(`<ul class="w-left-bar-menu" data-folder="${data[item].folderId}"></ul>`);
+
+
+            if (data[item].barIcon) {
+
+                let title = $(`<li class="w-left-bar-menu__title">
+                                <div class="w-left-bar-menu__icon">
+                                    <img src="${data[item].barIcon}" alt="${data[item].title}">
+                                </div>
+                                ${data[item].title}
+                            </li>`);
+                list.append(title);
+
+                data[item].elements.forEach((item) => {
+
+
+                    let el = $(`<li data-type="${item.type}" data-el-id="${item.id}" data-el-segment="${item.segment}" class="js-left-bar-menu-item w-left-bar-menu__item p-main-color p-main-color-bg-hover">
+                                    ${item.name}
+                                </li>`);
+
+                    list.append(el);
+                });
+                $(container).append(list);
+            } else {
+
+                let li = $('<li></li>');
+
+                data[item].elements.forEach((item) => {
+
+                    let el = $(`<li data-type="${item.type}" data-el-id="${item.id}" data-el-segment="${item.segment}" class="js-left-bar-menu-item w-left-bar-menu__item p-main-color p-main-color-bg-hover">
+                                    ${item.name}
+                                </li>`);
+
+                    list.append(el);
+                });
+                li.append(list);
+                $(`[data-folder=${data[item].parentFolderId}]`).append(li);
+            }
+
+
+        }
+    }
+
+    PPAnalytics.prototype.buildFavoritesMenu = (icon, name, container, folderId) => {
+        let result = [];
+        let favoritesFolders = [];
+        let mostPopularFolder = {};
+        let myFavoritesFolder = {};
+        let mostPopularFolderElements = [];
+
+        $.ajax({
+            url: "/api/favorite",
+            type: "GET",
+            async: false,
+            beforeSend: function (XMLHttpRequest) {                   
+            XMLHttpRequest.setRequestHeader("Accept", "application/json; odata=verbose")
+            },
+            success: function (response) {
+                let items = response.favorites
+                for (let item of items) {
+                   favoritesFolders.push(item);
+                }
+
+                for (let favorite of favoritesFolders) {
+                    if (favorite.name == 'Most Popular') {
+                        mostPopularFolder.name = favorite.name;
+                        mostPopularFolder.id = favorite.id;
+                    }
+                    if (favorite.name == 'My Favorites') {
+                        myFavoritesFolder.name = favorite.name;
+                        myFavoritesFolder.id = favorite.id;
+                    }
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/home/index/refresh/ajax/Y",
+            type: "POST",
+            data: {
+                "folder_items": "Y"
+            },
+            async: false,
+            success: function (response) {
+                let db = new DashboardStorage(response.data),
+                    rows = db.rows;
+
+                for (let item in rows) {
+                    if (isMostPopularInclude() && Object.keys(mostPopularFolder).length !==0) {
+                        if (rows[item]['favorite_id'] == mostPopularFolder.id) {
+                            mostPopularFolderElements.push(rows[item]);
+                        }
+
+                        if (rows[item]['favorite_id'] != 0 && rows[item]['favorite_id'] !== mostPopularFolder.id) {
+                            result.push(rows[item]);
+                        }
+
+                    } else {
+                        if (rows[item]['favorite_id'] == myFavoritesFolder.id) {
+                            result.push(rows[item]);
+                        }
+                    }
+                }
+
+                if (isMostPopularInclude() && Object.keys(mostPopularFolder).length !==0) {
+                    buildFavortiesItems(result, name);
+                    buildFavortiesItems(mostPopularFolderElements, mostPopularFolder.name);
+                } else {
+                    buildFavortiesItems(result, name);
+                }
+            }
+        });
+
+        function isMostPopularInclude () {
+            let mostPopularVar = '[Include Most Popular]';
+            let trueValues = ['yes', 'y', 'include', 'included', 1];
+            let falseValues = ['null', '', 'no', 'exclude', 'excluded', 0];
+
+            mostPopularVar !== Number ? mostPopularVar = mostPopularVar.toLowerCase() : null;
+
+            if (trueValues.includes(mostPopularVar)) {
+                return true;
+            } else if (falseValues.includes(mostPopularVar)) {
+                return false;
+            }
+        }
+
+        function buildFavortiesItems(obj, itemName) {
+            let uniqueFolderElements = [];
+            let asArray = Object.entries(obj);
+            const $menu = $(`<ul class="w-left-bar-menu"></ul>`);
+            const $title = $(`<li class="w-left-bar-menu__title p-main-color-text js-left-bar-menu-item">
+                                <div class="w-left-bar-menu__icon">
+                                    <img src="${icon}" alt="${itemName}">
+                                </div>
+                                ${itemName}
+                            </li>`);
+
+            $menu.append($title);
+
+            asArray.filter(([key, value]) => {
+                let isDuplicate;
+
+                for (let item of uniqueFolderElements) {
+                    if (item['element_id'] == value['element_id']) {
+                        isDuplicate = true;
+                        break;
+                    } else {
+                        isDuplicate = false;
+                    }
+                }
+
+                if (!isDuplicate) {
+                    uniqueFolderElements.push(value);
+                    return true;
+                }
+            });
+
+            for (let item in uniqueFolderElements) {
+                let element = uniqueFolderElements[item];
+
+                if (element['element_type'] != 'external report' && element['element_type'] != 'other external content' || element['has_access'] == 'N') {
+                    continue;
+                }
+
+                let $item = $(`<li data-type="${element['element_type']}" data-el-id="${element['element_id']}" data-segment="${element['segment_value_id']}" class="w-left-bar-menu__item js-left-bar-menu-item p-main-color p-main-color-bg-hover">
+                                ${element['element_dashboard_name']}
+                            </li>`);
+
+                $menu.append($item);
+            }
+
+            $('#w-left-bar-menu-wrapper').prepend($menu);
+        }
+
+    };
+
+    PPAnalytics.prototype.buildColumns = function (data, container) {
+        const self = this;
+
+
+        for (let item in data) {
+            if (data[item]['color']) {
+                let columnList = self.buildColumnList(data[item]['elements'], data[item]['folderId'], data[item]['sortable']);
+
+                let columnEl = `<div class="w-favorites__column ${(data[item]['sortable'] ? 'sortable' : '')}">
+                    <div class="w-favorites__column-header" style="background-color: ${data[item]['color']}">
+                        <img class="w-favorites__column-header-icon" src="${data[item]['img']}" />
+                        <p class="w-favorites__column-header-title">${data[item]['title']}</p>
+                    </div>
+                        ${columnList[0].outerHTML}
+                    </div>`;
+
+                $(container).append(columnEl);
+            } else {
+                let columnList = self.buildColumnList(data[item]['elements'], data[item]['folderId'], data[item]['sortable'], data[item]['title'], data[item]['parentFolderId']);
+                let parentList = $(`[data-list-id=${data[item]['parentFolderId']}]`);
+                parentList.append(columnList);
+            }
+
+        }
+    }
+    PPAnalytics.prototype.buildColumnList = function (data, id, sortable, title, parentFOlderId) {
+        let listEl = $(`<ul data-list-id="${id}" class="w-favorites__column-list"></ul>`);
+
+        if (title) {
+            listEl.addClass('children-folder-ul');
+            listEl.attr('data-list-partent-id', parentFOlderId);
+
+
+            listEl.append($(`<li style="order: 1" class="w-favorites__column-list-title">${title}</li>`));
+        }
+
+        data.forEach((item, index) => {
+            let cleanDescr = item.descr.replace(/<\/?[^>]+(>|$)/g, "");
+
+
+            let order = sortable ? 'order:' + index + 2 : `order: ${item.order}`;
+
+
+            let listItemEl = $(`<li style="${order}" class="w-favorites__column-list-item">
+                                <span data-el-id="${item.id}"
+                                      data-el-segment="${item.segment}"
+                                      data-el-type="${item.type}"
+                                      ext:qtip='${cleanDescr}'>
+                                        ${item.name}
+
+                                </span>
+                            </li>`);
+
+            listEl.append(listItemEl);
+        });
+        if (title) {
+            let li = $('<li class="children-folder-wrapper"></li>');
+            li.append(listEl);
+            return li;
+        }
+        return listEl;
+    }
+
+    PPAnalytics.prototype.hexToRgbA = function (hex) {
+        var c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split('');
+            if (c.length == 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = '0x' + c.join('');
+            return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',1)';
+        }
+        throw new Error('Bad Hex');
+    }
+    PPAnalytics.prototype.changeOpacity = function (rgba, opacity) {
+        return rgba.replace(/[^,]+(?=\))/, opacity)
+    }
+    PPAnalytics.prototype.addStyles = function (folders) {
+        const self = this;
+        const colors = [];
+        let mainActiveColor = colorsFT.mainActive;
+
+        for (let el in folders) {
+
+            if (folders[el].color) {
+                colors.push({
+                    id: el,
+                    color: self.hexToRgbA(folders[el].color),
+                })
+            }
+
+        }
+
+        colors.forEach((el) => {
+            $(`[data-list-id=${el.id}] .w-favorites__column-list-title`).each(function () {
+                $(this).css({
+                    'color': el.color,
+                    'background-color': self.changeOpacity(el.color, '0.2'),
+                })
+            })
+        });
+
+        let styleEl = `<style>
+            body,
+            body .container-fluid {
+                background: ${mainActiveColor} !important;
+            }
+
+            .w-left-bar__close:before,
+            .w-left-bar__close:after {
+                background: ${mainActiveColor};
+            }
+
+            .w-left-bar-menu__item.active {
+                background-color: ${mainActiveColor};
+            }
+            .w-left-bar-back:after {
+                background: ${mainActiveColor.replace(/[^,]+(?=\))/, 0.25)};
+            }
+            </style>`;
+
+            $('#links-page-container').append(styleEl);
+    }
+
+    $(document).ready(function () {
+        const Data = [Column Data];
+        const folders = {};
+
+        for (let i = 0; i < Data.length; i++) {
+            folders[Data[i]['folder_id']] = {
+                title: Data[i]['title'],
+                img: Data[i]['img'],
+                barIcon: Data[i]['left-bar-icon'],
+                folderId: Data[i]['folder_id'],
+                color: Data[i]['color'],
+                elements: [],
+                elementsId: [],
+                sortable: (Data[i]['sortable'] === 'yes') ? true : false,
+            }
+        }
+
+        const ppAnalytics = new PPAnalytics(folders);
+        ppAnalytics.init();
+    });
+
+    $(document).on('click', '.w-favorites__column-list-item span', function () {
+        const elId = $(this).attr('data-el-id');
+        const elSegment = $(this).attr('data-el-segment');
+        const elType = $(this).attr('data-el-type');
+
+        $.ajax({
+            "url": "/home/index/getexternalurl/ajax/Y/",
+            type: "POST",
+            data: {
+                element: elId,
+                segment: elSegment
+            },
+            success: function (data) {
+                const type = data.external_report_display;
+
+                if (type == 'iframe') {
+                    $('#links-page-container').hide();
+                    $('#w-iframe-wrapper').show();
+
+                    buildIframe(`element/${elId}/segment/${elSegment}/`, elType);
+                    return
+                }
+
+                const url = data.url;
+
+                if (type == 'download') {
+                    window.location.replace(url);
+                } else {
+                    window.open(url, '_blank').focus();
+                }
+            }
+        });
+    })
+
+
+    function buildIframe(src, type) {
+        $('#frame').remove();
+
+        let height = $('#w-iframe-wrapper').height() - 10,
+            width = $('#w-iframe-wrapper').width() - 15;
+
+        let iframeType = '';
+        if (type == 'external report') {
+            iframeType = 'extreport';
+        } else if (type == 'other external content') {
+            iframeType = 'extcontent';
+        }
+
+        const iframe = $(`<iframe style="width:${width}px; height:${height}px; border: none;" name="frame" id="frame" frameborder="0"
+                        src="/${iframeType}/index/preview/${src}width/${width}/height/${height}"></iframe>`);
+
+        $('#w-iframe-wrapper').append(iframe);
+
+        iframe.on('load', function () {
+            const style = $('<style>.main-wrap-viewer .chart-container {border: none} html:not(.isMobileDevice):not(.without-scroll-fix):not(.mod_new_editor_view) {margin-left: 0!important;}</style>');
+            iframe.contents().find('head').append(style);
+        });
+    }
+
+    function openBar() {
+        $('#w-left-bar').addClass('open');
+    }
+
+    function closeBar() {
+        $('#w-left-bar').removeClass('open');
+    }
+
+    $(document).on('click', '#w-left-bar-btn', openBar);
+    $(document).on('click', '#w-left-bar-close', closeBar);
+    $(document).on('click', '.w-left-bar-back', function () {
+        $('#links-page-container').show();
+        $('#frame').remove();
+        $('#w-iframe-wrapper').hide();
+        closeBar();
+    })
+    $(document).on('click', '.js-left-bar-menu-item', function () {
+        $('.w-left-bar-menu__item.active').removeClass('active');
+        $(this).addClass('active');
+
+        const elId = $(this).attr('data-el-id');
+        const elSegment = $(this).attr('data-el-segment');
+        const elType = $(this).attr('data-type');
+
+        $.ajax({
+            "url": "/home/index/getexternalurl/ajax/Y/",
+            type: "POST",
+            data: {
+                element: elId,
+                segment: elSegment
+            },
+            success: function (data) {
+                const type = data.external_report_display;
+
+                if (type == 'iframe') {
+                    $('#links-page-container').hide();
+                    $('#w-iframe-wrapper').show();
+                    buildIframe(`element/${elId}/segment/${elSegment}/`, elType);
+                    return
+                }
+
+                const url = data.url;
+
+                if (type == 'download') {
+                    window.location.replace(url);
+                } else {
+                    window.open(url, '_blank').focus();
+                }
+            }
+        });
+
+
+    });
+</script>

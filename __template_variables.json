@@ -1,0 +1,103 @@
+{
+    "tags": [
+        {
+            "portal_page_template_tag_id": "532",
+            "portal_page_template_id": "108",
+            "name": "Page Title",
+            "uid": "41347060f67bcef16613",
+            "default_value": "GSM Analytics Page",
+            "additional_options": "",
+            "tag_type": "text",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "0",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "N",
+            "description": ""
+        },
+        {
+            "portal_page_template_tag_id": "533",
+            "portal_page_template_id": "108",
+            "name": "Logo",
+            "uid": "5a9602163d9cf7b64248",
+            "default_value": "",
+            "additional_options": "",
+            "tag_type": "file",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "1",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "N",
+            "description": ""
+        },
+        {
+            "portal_page_template_tag_id": "534",
+            "portal_page_template_id": "108",
+            "name": "Column Data",
+            "uid": "f4e56f4585d0678d3782",
+            "default_value": "",
+            "additional_options": [
+                "title",
+                "img",
+                "left-bar-icon",
+                "color",
+                "folder_id",
+                {
+                    "name": "sortable",
+                    "type": "select",
+                    "options": [
+                        "yes",
+                        "no"
+                    ]
+                }
+            ],
+            "tag_type": "text",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "2",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "Y",
+            "description": ""
+        },
+        {
+            "portal_page_template_tag_id": "535",
+            "portal_page_template_id": "108",
+            "name": "Logo Max Height",
+            "uid": "2e6d3ff5bc8b5ff8312d",
+            "default_value": "60px",
+            "additional_options": "",
+            "tag_type": "text",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "3",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "N",
+            "description": ""
+        },
+        {
+            "portal_page_template_tag_id": "536",
+            "portal_page_template_id": "108",
+            "name": "Include Most Popular",
+            "uid": "409b29fea474ae57aeaf",
+            "default_value": "Inside the navigation bar",
+            "additional_options": "No",
+            "tag_type": "text",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "4",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "N",
+            "description": ""
+        }
+    ],
+    "settings": {
+        "image_capture_timeout": "20",
+        "image_capture_on_event": "none",
+        "image_capture_css_selector": ""
+    }
+}
