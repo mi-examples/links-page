@@ -42,8 +42,6 @@
         const self = this;
 
         self.fetchFolders().then(
-
-
             response => {
                 const folders = response.folders;
 
@@ -261,12 +259,11 @@
                     list.append(el);
                 });
                 $(container).append(list);
-            } else {
 
+            } else {
                 let li = $('<li></li>');
 
                 data[item].elements.forEach((item) => {
-
                     let el = $(`<li data-type="${item.type}" data-el-id="${item.id}" data-el-segment="${item.segment}" class="js-left-bar-menu-item w-left-bar-menu__item p-main-color p-main-color-bg-hover">
                                     ${item.name}
                                 </li>`);
@@ -342,7 +339,7 @@
                     }
                 }
 
-                if (isMostPopularInclude() && Object.keys(mostPopularFolder).length !==0) {
+                if (isMostPopularInclude() && Object.keys(mostPopularFolder).length !== 0) {
                     buildFavortiesItems(result, name);
                     buildFavortiesItems(mostPopularFolderElements, mostPopularFolder.name);
                 } else {
@@ -574,12 +571,11 @@
                 segment: elSegment
             },
             success: function (data) {
-                const type = data.external_report_display;
+                const type = '[Display Content Type]';
 
-                if (type == 'iframe') {
+                if (type == 'In-place Simplified Viewer') {
                     $('#links-page-container').hide();
                     $('#w-iframe-wrapper').show();
-
                     buildIframe(`element/${elId}/segment/${elSegment}/`, elType);
                     return
                 }
@@ -652,9 +648,9 @@
                 segment: elSegment
             },
             success: function (data) {
-                const type = data.external_report_display;
+                const type = '[Display Content Type]';
 
-                if (type == 'iframe') {
+                if (type == 'In-place Simplified Viewer') {
                     $('#links-page-container').hide();
                     $('#w-iframe-wrapper').show();
                     buildIframe(`element/${elId}/segment/${elSegment}/`, elType);

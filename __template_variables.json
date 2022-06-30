@@ -93,6 +93,22 @@
             "use_json_editor_ind": "N",
             "json_list_ind": "N",
             "description": ""
+        },
+        {
+            "portal_page_template_tag_id": "538",
+            "portal_page_template_id": "108",
+            "name": "Display Content Type",
+            "uid": "a6a03c0d698df5191c55",
+            "default_value": "Full Element Viewer",
+            "additional_options": "",
+            "tag_type": "text",
+            "tag_source": "static",
+            "javascript_code": "",
+            "display_order": "5",
+            "use_hmtl_editor_ind": "N",
+            "use_json_editor_ind": "N",
+            "json_list_ind": "N",
+            "description": "Accepts either Full Element Viewer or In-place Simplified Viewer value"
         }
     ],
     "settings": {
