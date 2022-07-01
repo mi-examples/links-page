@@ -92,10 +92,6 @@
     font-size: 13px;
 }
 
-.w-favorites__column-list-item:last-child {
-    margin-bottom: 0;
-}
-
 .w-favorites__column-list-item a {
     text-decoration: none;
     color: inherit;
