@@ -165,6 +165,8 @@
     PPAnalytics.prototype.getElements = function (folderId, rows) {
         const self = this;
         let foldersElems = self.folders[folderId].elementsId;
+        
+        console.log(rows)
 
         for (let item in rows) {
             for (let i = 0; i < foldersElems.length; i++) {
