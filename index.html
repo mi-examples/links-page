@@ -169,8 +169,8 @@
         for (let item in rows) {
             for (let i = 0; i < foldersElems.length; i++) {
                 if (foldersElems[i]['id'] == rows[item]['element_id']) {
+                    console.log(rows[item]['section_type'])
                     if (rows[item]['section_type'] == 'Category') {
-                        console.log(rows[item]['element_type'])
                         if (rows[item]['element_type'] === 'external report') {
                             self.folders[folderId].elements.push({
                                 id: rows[item]['element_id'],
