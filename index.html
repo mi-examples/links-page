@@ -37,6 +37,7 @@
         this.childrenFolders = {};
         this.includeMostPopularFolder = false;
         this.mainContainer = $('#links-page-container');
+        this.pageUrl = window.location.pathname.substring(3);
     }
     PPAnalytics.prototype.init = function () {
         const self = this;
@@ -55,7 +56,7 @@
                 self.buildColumns(self.folders, '#analytics-row');
                 self.buildBar(self.folders, '#w-left-bar-menu-wrapper');
 
-                self.buildFavoritesMenu('/pt/links-page/img/star.svg', 'Favorites', '#w-left-bar-menu-wrapper');
+                self.buildFavoritesMenu(`/pt/${pageUrl}/img/star.svg`, 'Favorites', '#w-left-bar-menu-wrapper');
 
                 self.sortFolders();
 
@@ -539,8 +540,7 @@
     }
 
     PPAnalytics.prototype.addMainStyles = function() {
-        let pageUrl = window.location.pathname.substring(3);
-        let mainStylesEl = `<link rel="stylesheet" href="/pt/${pageUrl}/style.css">`;
+        let mainStylesEl = `<link rel="stylesheet" href="/pt/${this.pageUrl}/style.css">`;
         
         this.mainContainer.before(mainStylesEl);
         this.mainContainer.show();
