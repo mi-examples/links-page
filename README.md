@@ -75,5 +75,5 @@ Once you have made all the changes, click **[Save]**.
 
 1. To display the Portal Page, select **[View]** in the **_Portal Page Editor_**. 
 <br>
-The Quick Report Bursting Portal Page is displayed. 
+The Links Portal Page is displayed. 
 
