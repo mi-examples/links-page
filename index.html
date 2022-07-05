@@ -543,7 +543,7 @@
         let pageUrl = window.location.pathname.substring(3);
         let mainStylesEl = `<link rel="stylesheet" href="/pt/${pageUrl}/style.css">`;
         
-        mainStylesEl.insertBefore(this.mainContainer);
+        this.mainContainer.before(mainStylesEl);
     }
 
     $(document).ready(function () {
