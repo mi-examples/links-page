@@ -20,6 +20,7 @@ Some text
 2. Main reports from the folders
 3. Reports from the sub-folders
 
+
 ## Installation
 ### 1. Access Admin > Portal Pages > Templates
 <img src="" width=70%; height = 70%/>
