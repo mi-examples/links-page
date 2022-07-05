@@ -63,7 +63,6 @@
         )
 
         self.addMainStyles();
-        self.mainContainer.show();
 
     }
     PPAnalytics.prototype.sortFolders = function () {
@@ -545,6 +544,7 @@
         let mainStylesEl = `<link rel="stylesheet" href="/pt/${pageUrl}/style.css">`;
         
         this.mainContainer.before(mainStylesEl);
+        this.mainContainer.show();
     }
 
     $(document).ready(function () {
