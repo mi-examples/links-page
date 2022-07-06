@@ -38,40 +38,21 @@ There are several ways of uploading assets:
   
 ### 2.2. [Sync with Git](https://help.metricinsights.com/m/Managing_the_Metric_Insights_Environment/l/1359676-sync-portal-page-templates-with-github)
 
-### 3. Add Variables
-<img src="" width=70%; height = 70%/>
-
-On the _Info_ tab, add the next Variables, (paths are provided for convenience):
-
-* _Tableau Template_, _Microsoft Power BI Template_, _Qlik Sense Template_
-  * These are External Report Templates, can be found under **Admin > Reference Objects > Object Templates > External Report tab**
-* Digest Template: 
-  * Admin > Distribution > Email Templates
-* Default Notification Schedule: 
-  * Admin > Distribution > Notification Schedules
-
- Repeat the next steps for the Variables listed above: 
-1. At _Variables_ section, select **[+ Variable]**
-2. Enter the **Name** and **Default Value** of the Variable. 
-     * **Name**: Names of the Variables are listed above
-     * **Default Value** is the ID of the Element (can be found in the URL of the element)
-3. **[Apply]**
-
-### 4. Add Portal Page:  Admin > Portal Pages
+### 3. Add Portal Page:  Admin > Portal Pages
 <img src="" width=70%; height = 70%/>
 
 1. Below the grid, select **[+ New Page]**
 2. **Template**: select the Portal Page Template created at Step 1
 3. **[Save]**
 
-### 5. Configure Variables
+### 4. Configure Variables
 <img src="" width=70%; height = 70%/>
 
 Optionally, you can change the values of Variables. 
 <br>
 Once you have made all the changes, click **[Save]**.
 
-### 6. View the Portal Page
+### 5. View the Portal Page
 <img src="" width=80%; height=80%/>
 
 1. To display the Portal Page, select **[View]** in the **_Portal Page Editor_**. 
