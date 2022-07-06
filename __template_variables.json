@@ -5,7 +5,7 @@
             "portal_page_template_id": "108",
             "name": "Page Title",
             "uid": "41347060f67bcef16613",
-            "default_value": "GSM Analytics Page",
+            "default_value": "",
             "additional_options": "",
             "tag_type": "text",
             "tag_source": "static",
