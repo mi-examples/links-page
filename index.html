@@ -583,7 +583,7 @@
                 const type = '[Display Content Type]';
                 console.log(type)
 
-                if (type == 'In-place Simplified Viewer') {
+                if (type == 2) {
                     $('#links-page-container').hide();
                     $('#w-iframe-wrapper').show();
                     buildIframe(`element/${elId}/segment/${elSegment}/`, elType);
@@ -660,7 +660,7 @@
             success: function (data) {
                 const type = '[Display Content Type]';
 
-                if (type == 'In-place Simplified Viewer') {
+                if (type == 2) {
                     $('#links-page-container').hide();
                     $('#w-iframe-wrapper').show();
                     buildIframe(`element/${elId}/segment/${elSegment}/`, elType);
