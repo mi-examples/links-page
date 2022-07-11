@@ -43,7 +43,11 @@
                 "img",
                 "left-bar-icon",
                 "color",
-                "folder_id",
+                {
+                    "name": "folder",
+                    "type": "select",
+                    "source": "folder"
+                },
                 {
                     "name": "sortable",
                     "type": "select",
