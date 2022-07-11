@@ -44,7 +44,7 @@
                 "left-bar-icon",
                 "color",
                 {
-                    "name": "folder",
+                    "name": "folder_id",
                     "type": "select",
                     "source": "folder"
                 },
