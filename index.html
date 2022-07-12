@@ -1,3 +1,11 @@
+<scirpt>
+    let mainStylesEl = `<link rel="stylesheet" href="/pt/[Template Internal Name]/style.css">`;
+    let mainContainer = $('#inks-page-container');
+
+    mainContainer.before(mainStylesEl);
+    mainContainer.show();
+</scirpt>
+
 <div class="w-wrapper" id="links-page-container" style="display: none;">
     <div class="w-container">
         <div class="w-header">
@@ -42,7 +50,6 @@
     PPAnalytics.prototype.init = function () {
         const self = this;
 
-        self.addMainStyles();
         self.fetchFolders().then(
             response => {
                 const folders = response.folders;
@@ -537,13 +544,6 @@
             </style>`;
 
             $('#links-page-container').append(styleEl);
-    }
-
-    PPAnalytics.prototype.addMainStyles = function() {
-        let mainStylesEl = `<link rel="stylesheet" href="/pt/${this.pageUrl}/style.css">`;
-        
-        this.mainContainer.before(mainStylesEl);
-        this.mainContainer.show();
     }
 
     $(document).ready(function () {
