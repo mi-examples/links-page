@@ -1,9 +1,9 @@
 <script>
     let mainStylesEl = `<link rel="stylesheet" href="/pt/[Template Internal Name]/style.css">`;
-    let mainContainer = $('#links-page-container');
+    let mainContainer = document.querySelector('#inks-page-container');
 
-    mainContainer.before(mainStylesEl);
-    mainContainer.show();
+    mainContainer.insertBefore(mainStylesEl);
+    mainContainer.style.display = 'block';
 </script>
 
 <div class="w-wrapper" id="links-page-container" style="display: none;">
