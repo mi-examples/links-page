@@ -1,6 +1,8 @@
 <script>
-    let mainStylesEl = `<link rel="stylesheet" href="/pt/[Template Internal Name]/style.css">`;
-    let mainContainer = document.querySelector('#inks-page-container');
+    let mainStylesEl = document.createElement('link');
+    mainStylesEl.setAttribute('rel', 'stylesheet');
+    mainStylesEl.setAttribute('href', '/pt/[Template Internal Name]/style.css');
+    let mainContainer = document.querySelector('#links-page-container');
 
     mainContainer.insertBefore(mainStylesEl);
     mainContainer.style.display = 'block';
