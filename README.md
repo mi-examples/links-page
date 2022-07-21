@@ -1,6 +1,6 @@
-# Corporate Operations Portal Page
+# Links Page
 ## Introduction
-Some text
+A dense catalog of links, driven by Metric Insights Folders
 
 ## Page Description
 
